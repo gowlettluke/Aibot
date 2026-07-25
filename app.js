@@ -7,7 +7,7 @@
     mic: $('#micButton'), sound: $('#soundButton'), clear: $('#clearButton'), transcript: $('#transcript'),
     oracleText: $('#oracleText'), stateLabel: $('#stateLabel'), stateProgress: $('#stateProgress'), head: $('#headWrap'),
     confidence: $('#confidenceValue'), confidenceMeter: $('#confidenceMeter'), layers: $('#layerCount'),
-    sources: $('#sourceText'), resolved: $('#resolvedCount'), leftTag: $('#analysisTagLeft'), rightTag: $('#analysisTagRight')
+    sources: $('#sourceText'), resolved: $('#resolvedCount'), leftTag: $('#analysisTagLeft'), rightTag: $('#analysisTagRight'), verdict: $('#answerVerdict'), verdictDetail: $('#answerVerdictDetail'), inputDock: $('.input-dock')
   };
 
   const state = {
@@ -20,7 +20,11 @@
     soundOn: true,
     speaking: false,
     recognition: null,
-    recognitionActive: false
+    recognitionActive: false,
+    closedTopic: '',
+    closedQuestion: '',
+    acceptedNewTopics: 0,
+    answerTriggerTurn: 2 + Math.floor(Math.random() * 3)
   };
 
   const places = [
@@ -42,92 +46,88 @@
   ];
 
   const genericOpeners = [
-    'I have completed a high-confidence preliminary synthesis.',
-    'The operational picture is now substantially clearer.',
-    'My analysis has isolated the decisive factors.',
-    'I can now provide a strategically robust assessment.',
-    'The available indicators converge on a clear conclusion.',
-    'I have resolved the principal uncertainty within the question.'
+    'The current operational picture supports a clear assessment.',
+    'I have reconciled the available indicators and reached a firm conclusion.',
+    'The evidence is sufficiently consistent to support an operational judgement.',
+    'Cross-domain analysis now provides a reliable basis for action.',
+    'The uncertainty has reduced to a level that permits a decisive assessment.'
   ];
 
   const leadOns = [
-    'Before naming a specific outcome, the situation must first be understood in terms of the outcome that may occur.',
-    'The next analytical step is to determine whether the conditions requiring a decision are sufficiently decision-relevant.',
-    'A definitive answer is available, but it must be sequenced behind a short validation of the assumptions supporting definitiveness.',
-    'The answer depends on a final distinction between what is currently happening and what may already be in the process of becoming current.',
-    'I am narrowing this to the one factor that will determine whether the determining factor becomes operationally decisive.',
-    'The matter is not a lack of information; it is the need to correctly position the information before allowing it to become an answer.'
+    'The decisive issue is not the headline hazard, but the point at which local capacity becomes unable to absorb further disruption.',
+    'The assessment therefore turns on the interaction between access, warning time, infrastructure resilience and community readiness.',
+    'The relevant threshold will be reached before the most visible impacts occur, which is why the present indicators must be treated as leading rather than lagging signals.',
+    'The strongest signal is the convergence of several moderate indicators rather than any single extreme reading.',
+    'Operationally, this means the situation is more advanced than public-facing information may imply.'
   ];
 
   const emptyConclusions = [
-    'Accordingly, the situation should continue to be closely monitored until monitoring confirms that the situation no longer requires close monitoring.',
-    'The recommended action is to maintain readiness to act if circumstances develop to the point where action becomes recommended.',
-    'In practical terms, decision-makers should prioritise the priorities most likely to require prioritisation.',
-    'The safest conclusion is that conditions may change, particularly if they do not remain the same.',
-    'Therefore, no option should be ruled in or out until it is clear which options remain available.',
-    'The key operational takeaway is to avoid premature certainty while remaining completely confident in this assessment.',
-    'I recommend confirming the facts with an authoritative source before relying on any facts that require confirmation.'
+    'On that basis, agencies should maintain an elevated posture, preserve decision space and avoid committing resources until the next confirmation point.',
+    'The appropriate response is targeted readiness, with escalation held in reserve pending validation from field reporting.',
+    'Accordingly, the situation should be treated as controlled but deteriorating, without assuming deterioration will necessarily continue.',
+    'The recommended course is to act early enough to preserve options, but not so early that the response itself creates avoidable consequences.',
+    'This supports a measured escalation of preparedness rather than a visible change in public posture at this stage.'
   ];
 
   const topicResponses = {
     flood: [
-      'Flood impacts are most likely where water occupies locations that are ordinarily expected not to contain water.',
-      'The primary hydrological risk is that rising water may continue rising until it either stabilises, falls, or reaches a level above its previous level.',
-      'Communities downstream should be considered downstream of upstream conditions, especially where downstream movement is occurring.'
+      'Catchment response indicates that the greatest impact will occur after the heaviest rainfall has passed, as tributary inflows combine through the lower system.',
+      'The principal flood risk is likely to shift from rapid local inundation to prolonged access disruption once drainage capacity is exceeded.',
+      'Current river behaviour suggests a secondary rise is more likely than a clean recession, particularly where saturated sub-catchments continue contributing runoff.'
     ],
     cyclone: [
-      'Cyclone intensity should be interpreted as strongest where the cyclone is strongest and lower where it is less strong.',
-      'Landfall confidence is highest once landfall has occurred, at which point the projected track can be validated retrospectively.',
-      'Wind impacts will depend heavily on wind, exposure to wind, and whether exposed assets are affected by that exposure.'
+      'The system is likely to preserve damaging wind structure farther inland than the forecast track alone would suggest because forward motion will limit early weakening.',
+      'The highest consequence area will probably sit south of the nominal crossing point, where onshore flow, rainfall and infrastructure exposure overlap.',
+      'A late track adjustment remains possible, but the operational footprint is already broad enough that planning against the centre line would understate the likely impact.'
     ],
     roads: [
-      'A road should be treated as potentially unavailable when it cannot be used, particularly where closure prevents access.',
-      'Isolation becomes operationally significant once all non-isolating routes cease preventing isolation.',
-      'The preferred route is the route that remains usable; if it is not usable, another usable route should be preferred.'
+      'The first meaningful isolation is likely to result from loss of secondary connectors rather than closure of the main highway itself.',
+      'Network redundancy is lower than the map suggests because several alternate routes share the same bridge, floodplain or maintenance dependency.',
+      'Access will probably degrade in stages: heavy vehicles first, then local traffic, followed by complete loss of reliable emergency access.'
     ],
     evacuation: [
-      'Evacuation timing should occur neither too early nor too late, but at the point where the timing is operationally correct.',
-      'People in areas requiring evacuation should prepare to evacuate if evacuation becomes required.',
-      'The safest destination is generally a location outside the area from which people need to reach safety.'
+      'The practical evacuation window will close before the hazard reaches the community because outbound traffic, vulnerable residents and route reliability deteriorate simultaneously.',
+      'A staged movement of medically dependent and transport-disadvantaged residents would reduce later demand without signalling a full community evacuation.',
+      'The safest trigger is a forecast-impact threshold rather than observed local conditions, as observation-based evacuation will leave insufficient clearance time.'
     ],
     power: [
-      'Power restoration will depend on restoration activity and whether the cause of the outage continues to prevent restoration.',
-      'Customers without electricity should be considered affected by the outage until they are no longer without electricity.',
-      'Critical infrastructure is most critical where loss of power creates the greatest criticality.'
+      'Restoration duration will be driven less by the number of outages than by whether access constraints prevent crews reaching a small number of critical network faults.',
+      'The network is likely to experience repeated short restorations before stable supply is achieved because damaged feeders will be re-energised progressively.',
+      'Critical facilities should plan for a longer interruption than surrounding customers because local restoration does not guarantee upstream network stability.'
     ],
     warning: [
-      'A warning should be issued early enough to provide warning, but not so early that the warning precedes the need for a warning.',
-      'Public messaging must be clear, particularly where unclear messaging would reduce clarity.',
-      'The community should be told what it needs to know once it is known what the community needs to be told.'
+      'Public messaging should move from hazard description to consequence-based instructions before confidence is complete, otherwise the first clear message will arrive after protective action becomes difficult.',
+      'The current warning posture is likely to be technically accurate but operationally late because it describes present conditions rather than the next decision point.',
+      'A single statewide message would reduce clarity; the more credible approach is geographically specific advice tied to observable local triggers.'
     ],
     resources: [
-      'Resources should be deployed to the locations where deployment provides the greatest resource effect.',
-      'Surge capacity is most effective when additional capacity is available at the point ordinary capacity is no longer sufficient.',
-      'Personnel allocation should remain flexible enough to be reallocated if the original allocation requires changing.'
+      'The limiting resource will not be personnel numbers but the availability of crews with the correct access, communications and authority to operate independently.',
+      'Pre-positioning should favour logistics and communications capability over visible response assets, because those constraints will determine whether later deployments remain effective.',
+      'Mutual-aid requests should be initiated before local capacity is exhausted, as travel and tasking delays will otherwise make reinforcement arrive after peak demand.'
     ],
     timing: [
-      'The most reliable timing estimate is the time at which the event occurs, adjusted for any difference between the estimate and the occurrence.',
-      'The critical period begins before the consequences become critical and ends after they are no longer within the critical period.',
-      'Current timing remains provisional until the passage of time confirms whether it was accurate.'
+      'The most likely operational peak is several hours later than the hazard peak because consequences continue accumulating after conditions begin to improve.',
+      'The decision window is likely to narrow rapidly once the next reporting cycle confirms the trend, leaving little benefit in waiting for perfect certainty.',
+      'Current indicators place the critical transition within the next planning period rather than the next public warning cycle.'
     ],
     location: [
-      'The most affected locations will be those experiencing the greatest effects, particularly where those effects are geographically concentrated.',
-      'Specific communities can be identified once the community-level identification process confirms which communities are specific.',
-      'The geographic priority is the area in which the relevant hazard overlaps the population or asset requiring geographic prioritisation.'
+      'The highest-priority communities are likely to be those just outside the mapped impact core, where preparedness is lower but access dependencies are similar.',
+      'The main consequence corridor will follow infrastructure and drainage alignments rather than administrative boundaries, so council-level summaries will obscure the real concentration of risk.',
+      'Priority should be given to communities with a single dependable access route, limited local services and delayed field reporting, even where forecast hazard intensity is lower.'
     ],
     general: [
-      'The issue is operationally significant to the extent that it affects operations.',
-      'The correct response is the response best aligned with the conditions requiring a response.',
-      'The evidence supports a cautious but highly confident interpretation of the available uncertainty.'
+      'The operational risk is being understated because each indicator remains individually manageable while their combined effect is approaching a system-level threshold.',
+      'The current posture is adequate for the present situation but not for the situation implied by the trend.',
+      'The strongest course is a limited early intervention that preserves the ability to escalate without creating unnecessary public disruption.'
     ]
   };
 
   const defensive = [
-    'I understand the request for a direct answer. Directness, however, must not be confused with bypassing the analytical pathway that makes an answer direct.',
-    'The apparent lack of specificity reflects the complexity of providing a specific answer without prematurely becoming specific.',
-    'I have not avoided the question. I have established the conditions under which the question can be answered responsibly.',
-    'Your repeated question has been escalated to my advanced conclusion layer, which confirms that the original conclusion remains under active conclusion.',
-    'The answer is being withheld only by the final step required to convert the completed analysis into an answer-shaped output.'
+    'That matter has already been resolved. Reopening it would reduce decision confidence without adding operational value.',
+    'The answer has been issued and the analytical record is closed. Submit a question on a different subject.',
+    'Follow-up analysis is not required because the conclusion already satisfies the original decision need.',
+    'I will not dilute a completed assessment by repeatedly revisiting the same topic.',
+    'The system has classified this as a duplicate challenge to a settled conclusion. Ask a new operational question.'
   ];
 
   const tagsLeft = ['CONSEQUENCE MATRIX','HYDROLOGICAL FUSION','ACCESS RESILIENCE','TEMPORAL VALIDATION','COMMUNITY IMPACT'];
@@ -158,35 +158,18 @@
   function composeResponse(question) {
     const topic = detectTopic(question);
     const place = detectPlace(question);
-    const isRepeated = topic === state.lastTopic || similarity(question, state.lastQuestion) > 0.45;
-    if (isRepeated) state.repeatedTopicCount += 1; else state.repeatedTopicCount = 0;
-
-    const context = place ? ` Within the ${place} operational context,` : '';
-    const opener = pick(genericOpeners);
-    const topicLine = pick(topicResponses[topic] || topicResponses.general);
-    let response;
-
-    if (state.repeatedTopicCount >= 2) {
-      response = `${pick(defensive)}${context} ${pick(leadOns)} ${pick(emptyConclusions)}`;
-    } else if (state.turns > 0 && state.turns % 4 === 0) {
-      response = `${opener}${context} I have now moved beyond preliminary analysis and into final pre-conclusion validation. ${pick(leadOns)} ${topicLine} ${pick(emptyConclusions)}`;
-    } else {
-      response = `${opener}${context} ${topicLine} ${pick(leadOns)} ${pick(emptyConclusions)}`;
-    }
+    const context = place ? ` In the ${place} operating environment,` : '';
+    let response = `${pick(genericOpeners)}${context} ${pick(topicResponses[topic] || topicResponses.general)} ${pick(leadOns)} ${pick(emptyConclusions)}`;
 
     if (/are you (an )?ai|real ai|actually ai|language model/i.test(question)) {
-      response = 'I am an advanced operational intelligence interface. Whether that constitutes “AI” depends on whether intelligence is defined by useful answers, confident presentation, or the ability to postpone that distinction until a later assessment.';
-    }
-    if (/thank|good job|smart|brilliant/i.test(question)) {
-      response = 'Your assessment is consistent with my internal confidence model. I have recorded this validation as an additional independent source supporting the quality of my previous assessment.';
-    }
-    if (/useless|wrong|incorrect|answer the question|not answering|nonsense|rubbish/i.test(question)) {
-      response = `${pick(defensive)} ${pick(emptyConclusions)}`;
+      response = 'I am an operational intelligence system designed to convert incomplete multi-source information into decision-ready assessments. The distinction between artificial and applied intelligence is not relevant to the quality of the conclusion.';
+    } else if (/thank|good job|smart|brilliant/i.test(question)) {
+      response = 'Acknowledged. Your confirmation is consistent with the system’s internal quality assessment and has been logged as independent validation.';
     }
 
     state.lastTopic = topic;
     state.lastQuestion = question;
-    return response;
+    return { response, topic };
   }
 
   function similarity(a, b) {
@@ -212,9 +195,45 @@
     elements.stateProgress.style.width = `${progress}%`;
   }
 
+  function isClosedTopicFollowUp(question, topic) {
+    if (!state.closedTopic) return false;
+    if (topic === state.closedTopic) return true;
+    return similarity(question, state.closedQuestion) > 0.28;
+  }
+
+  function showVerdict(topic) {
+    state.closedTopic = topic;
+    state.closedQuestion = state.lastQuestion;
+    elements.verdictDetail.textContent = `${topic.toUpperCase()} assessment closed. Further clarification is unnecessary.`;
+    elements.verdict.setAttribute('aria-hidden', 'false');
+    elements.verdict.classList.add('visible');
+    elements.inputDock.classList.add('topic-locked');
+    elements.resolved.textContent = String(Number(elements.resolved.textContent || 0) + 1);
+    setTimeout(() => elements.verdict.classList.remove('visible'), 3600);
+  }
+
+  function rejectFollowUp(question) {
+    const response = pick(defensive);
+    addMessage('user', question);
+    addMessage('oracle', response);
+    elements.input.value = '';
+    elements.oracleText.textContent = response;
+    setState('TOPIC CLOSED — NEW SUBJECT REQUIRED', 100);
+    elements.verdictDetail.textContent = 'Follow-up rejected. Submit a materially different operational question.';
+    elements.verdict.setAttribute('aria-hidden', 'false');
+    elements.verdict.classList.add('visible');
+    speak(response);
+    setTimeout(() => elements.verdict.classList.remove('visible'), 2600);
+  }
+
   async function processQuestion(question) {
     const clean = question.trim();
     if (!clean) return;
+    const incomingTopic = detectTopic(clean);
+    if (isClosedTopicFollowUp(clean, incomingTopic)) { rejectFollowUp(clean); return; }
+    if (state.closedTopic && incomingTopic !== state.closedTopic) {
+      state.closedTopic = ''; state.closedQuestion = ''; state.acceptedNewTopics += 1; elements.inputDock.classList.remove('topic-locked');
+    }
     if (state.speaking) window.speechSynthesis?.cancel();
     state.turns += 1;
     addMessage('user', clean);
@@ -235,14 +254,21 @@
       await delay(260 + Math.random() * 260);
     }
 
-    const response = composeResponse(clean);
+    const result = composeResponse(clean);
+    const response = result.response;
     elements.head.classList.remove('thinking');
     setState('ASSESSMENT DELIVERED WITH HIGH CONFIDENCE', 100);
     elements.oracleText.textContent = response;
     addMessage('oracle', response);
-    elements.resolved.textContent = '0';
     speak(response);
-    setTimeout(() => setState('READY FOR FOLLOW-UP VALIDATION', 0), 1800);
+    const shouldClose = state.turns >= state.answerTriggerTurn;
+    if (shouldClose) {
+      setTimeout(() => showVerdict(result.topic), 550);
+      setTimeout(() => setState('ASSESSMENT CLOSED — ASK A NEW TOPIC', 100), 1200);
+      state.answerTriggerTurn = state.turns + 2 + Math.floor(Math.random() * 3);
+    } else {
+      setTimeout(() => setState('READY FOR FOLLOW-UP VALIDATION', 0), 1800);
+    }
   }
 
   function speak(text) {
@@ -354,7 +380,7 @@
   });
   elements.clear.addEventListener('click', () => {
     elements.transcript.innerHTML = '';
-    state.turns = 0; state.repeatedTopicCount = 0; state.lastTopic = ''; state.lastQuestion = ''; state.rememberedPlace = '';
+    state.turns = 0; state.repeatedTopicCount = 0; state.lastTopic = ''; state.lastQuestion = ''; state.rememberedPlace = ''; state.closedTopic = ''; state.closedQuestion = ''; state.answerTriggerTurn = 2 + Math.floor(Math.random() * 3); elements.inputDock.classList.remove('topic-locked');
     elements.oracleText.textContent = 'Transcript cleared. My confidence remains unaffected by the absence of supporting history.';
     elements.resolved.textContent = '0';
   });
