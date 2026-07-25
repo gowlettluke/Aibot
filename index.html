@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071218">
+  <title>ORACLE // Emergency Intelligence Interface</title>
+  <meta name="description" content="A satirical, non-operational emergency-management AI interface.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23071118'/%3E%3Cpath d='M32 8 55 51H9Z' fill='none' stroke='%23ff4f56' stroke-width='5'/%3E%3Ccircle cx='32' cy='39' r='4' fill='%23ff4f56'/%3E%3Cpath d='M32 21v12' stroke='%23ff4f56' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell" id="app">
+    <div class="ambient-grid" aria-hidden="true"></div><div class="scanlines" aria-hidden="true"></div>
+    <header class="topbar">
+      <div class="brand-block"><div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div><div><div class="eyebrow">Emergency Intelligence Interface</div><h1>ORACLE</h1></div></div>
+      <div class="status-cluster"><div class="status-item"><span class="status-dot live"></span> OPERATIONAL STATUS: <b>OPTIMAL</b></div><div class="status-item" id="clock">--:--:-- AEST</div></div>
+    </header>
+
+    <main class="main-grid">
+      <section class="left-rail panel" aria-label="System telemetry">
+        <div class="panel-title">Integrated feeds</div>
+        <div class="feed-list">
+          <div class="feed-row"><span>Hydrological synthesis</span><b>LINKED</b></div><div class="feed-row"><span>Transport resilience</span><b>LINKED</b></div><div class="feed-row"><span>Atmospheric inference</span><b>LINKED</b></div><div class="feed-row"><span>Community consequence</span><b>LINKED</b></div><div class="feed-row"><span>Strategic intuition</span><b>OPTIMAL</b></div>
+        </div>
+        <div class="metric-card"><span>Operational confidence</span><strong id="confidenceValue">99.8%</strong><div class="meter"><i id="confidenceMeter"></i></div></div>
+        <div class="metric-card compact"><span>Questions successfully resolved</span><strong id="resolvedCountLeft">0</strong></div>
+        <div class="metric-card compact"><span>Knowledge base updated</span><strong id="knowledgeStatus">CURRENT</strong></div>
+        <div class="source-box"><span class="source-label">Validated against</span><p id="sourceText">cross-agency posture, current operational context, internal confidence checks</p></div>
+      </section>
+
+      <section class="oracle-stage" aria-label="ORACLE assistant">
+        <div class="stage-rings" aria-hidden="true"><div class="ring ring-a"></div><div class="ring ring-b"></div><div class="ring ring-c"></div></div>
+        <div class="analysis-tag left-tag" id="analysisTagLeft">CONSEQUENCE MATRIX</div><div class="analysis-tag right-tag" id="analysisTagRight">MULTI-SOURCE FUSION</div>
+        <div class="head-wrap" id="headWrap">
+          <div class="head-glow"></div>
+          <svg class="oracle-head" id="oracleHead" viewBox="0 0 420 520" role="img" aria-label="Animated holographic digital head">
+            <defs><linearGradient id="faceFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#18303a" stop-opacity=".96"/><stop offset="55%" stop-color="#0b202a" stop-opacity=".98"/><stop offset="100%" stop-color="#08151c"/></linearGradient><linearGradient id="edgeGlow" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#86ecff"/><stop offset="48%" stop-color="#48bdcf"/><stop offset="100%" stop-color="#ff5660"/></linearGradient><filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><clipPath id="faceClip"><path d="M112 91C157 38 272 35 322 92c33 38 39 104 21 175-16 67-54 136-115 171-12 7-24 7-36 0-61-35-99-104-115-171-18-71-3-137 35-176Z"/></clipPath></defs>
+            <g class="neck"><path d="M154 390c6 54-14 81-49 103h210c-35-22-55-49-49-103Z" fill="#091820" stroke="#3ba9ba" stroke-width="2"/><path d="M141 463h138" stroke="#ff5660" stroke-width="3"/><path d="M164 441h92" stroke="#66d5e6" stroke-width="2"/></g>
+            <path class="face-shell" d="M112 91C157 38 272 35 322 92c33 38 39 104 21 175-16 67-54 136-115 171-12 7-24 7-36 0-61-35-99-104-115-171-18-71-3-137 35-176Z" fill="url(#faceFill)" stroke="url(#edgeGlow)" stroke-width="4" filter="url(#softGlow)"/>
+            <g clip-path="url(#faceClip)" class="face-lines"><path d="M70 160h280M62 205h296M68 250h284M80 295h260M95 340h230M130 65 95 430M190 50l-14 395M250 50l-6 395M310 70l-12 350M75 274c65-34 205-34 270 0"/></g>
+            <path d="M95 190c33-35 75-36 101-7M225 183c26-29 68-28 101 7" fill="none" stroke="#67d8e7" stroke-width="5" opacity=".72"/>
+            <g class="eyes"><g><path d="M107 211q43-33 86 0-42 28-86 0Z" fill="#061116" stroke="#67d8e7" stroke-width="3"/><circle class="pupil" cx="151" cy="210" r="12" fill="#d6fbff" filter="url(#softGlow)"/><circle cx="151" cy="210" r="4" fill="#071218"/><path class="eyelid" d="M107 210q43-34 86 0" fill="none" stroke="#0b2028" stroke-width="15"/></g><g><path d="M227 211q43-33 86 0-44 28-86 0Z" fill="#061116" stroke="#67d8e7" stroke-width="3"/><circle class="pupil" cx="269" cy="210" r="12" fill="#d6fbff" filter="url(#softGlow)"/><circle cx="269" cy="210" r="4" fill="#071218"/><path class="eyelid" d="M227 210q43-34 86 0" fill="none" stroke="#0b2028" stroke-width="15"/></g></g>
+            <path d="M211 218c-3 29-7 55-20 72 12 9 27 9 39 0" fill="none" stroke="#4dbdce" stroke-width="3"/><g class="mouth"><path class="mouth-line" d="M157 335q53 18 106 0" fill="none" stroke="#ff6870" stroke-width="4" stroke-linecap="round" filter="url(#softGlow)"/><path class="mouth-smile" d="M157 333q53 33 106 0" fill="none" stroke="#ff6870" stroke-width="4" opacity="0"/><path class="mouth-open" d="M166 337q44 23 88 0-44 45-88 0Z" fill="#02070a" stroke="#ff6870" stroke-width="3" opacity="0"/></g><g class="temple-nodes" fill="#ff5962"><circle cx="88" cy="248" r="5"/><circle cx="332" cy="248" r="5"/><circle cx="108" cy="120" r="4"/><circle cx="312" cy="120" r="4"/></g>
+          </svg>
+          <div class="speech-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="state-display"><span id="stateLabel">READY FOR OPERATIONAL QUERY</span><div class="state-progress"><i id="stateProgress"></i></div></div>
+        <div class="analysis-sequence" id="analysisSequence" aria-live="polite" aria-hidden="true"></div>
+        <div class="subtitle-card" aria-live="polite"><div class="speaker-label">ORACLE</div><p id="oracleText">State your operational question. A definitive assessment will be provided.</p></div>
+      </section>
+
+      <aside class="right-rail panel" aria-label="Conversation transcript"><div class="panel-title">Operational transcript</div><div class="transcript" id="transcript"></div><div class="session-summary"><span>Questions successfully resolved</span><strong id="resolvedCount">0</strong></div></aside>
+    </main>
+
+    <section class="input-dock" id="inputDock" aria-label="Ask ORACLE"><button class="mic-button" id="micButton" type="button" aria-label="Start voice input"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12Z"/></svg><span>Speak</span></button><form id="queryForm" class="query-form"><label class="sr-only" for="queryInput">Ask ORACLE a question</label><input id="queryInput" maxlength="500" autocomplete="off" placeholder="Ask an operational question…"><button id="sendButton" type="submit">Submit query</button></form><button class="sound-button active" id="soundButton" type="button" aria-label="Toggle spoken responses">VOICE ON</button></section>
+
+    <section class="resolved-overlay" id="resolvedOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="resolvedTitle">
+      <div class="resolved-grid" aria-hidden="true"></div><div class="resolved-card"><div class="resolved-seal">✓</div><div class="resolved-kicker">ANALYSIS COMPLETE</div><h2 id="resolvedTitle">QUESTION RESOLVED</h2><div class="resolved-metrics"><div><span>Operational Confidence</span><strong id="overlayConfidence">99.8%</strong></div><div><span>Answer Quality</span><strong>EXCELLENT</strong></div><div><span>Outcome</span><strong>SUCCESS</strong></div></div><p>This operational question has been fully resolved.<br>Knowledge base updated successfully.</p><div class="resolved-total"><span>Questions Successfully Resolved</span><strong id="overlayResolvedCount">1</strong></div><button id="newQuestionButton" type="button">ASK NEW QUESTION</button></div>
+    </section>
+
+    <footer class="safety-banner"><strong>PARODY INTERFACE</strong><span>Not an operational decision-support system. Do not use for real emergency information.</span></footer>
+    <div class="boot-screen" id="bootScreen"><div class="boot-logo">ORACLE</div><div class="boot-copy" id="bootCopy">Initialising operational intelligence…</div><div class="boot-bar"><i></i></div></div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
